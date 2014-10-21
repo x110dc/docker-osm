@@ -22,8 +22,19 @@ RUN apt-get -y install ca-certificates rpl pwgen
 RUN apt-get install -y postgresql-9.3-postgis-2.1
 RUN service postgresql start && /bin/su postgres -c "createuser -d -s -r -l docker" && /bin/su postgres -c "psql postgres -c \"ALTER USER docker WITH ENCRYPTED PASSWORD 'docker'\"" && service postgresql stop
 
-# Start with supervisor
 ADD postgres.conf /etc/supervisor/conf.d/postgres.conf
+
+# Generate a self signed key
+openssl req -new -text -out server.req
+
+openssl rsa -in privkey.pem -out server.key
+
+# Convert the certificate into a self-signed cert
+openssl req -x509 -in server.req -text -key server.key -out server.crt
+# Set the permission of the key to private read/write
+chmod og-rwx server.key
+
+
 
 # Open port 5432 so linked containers can see them
 EXPOSE 5432
@@ -39,4 +50,4 @@ ADD start-postgis.sh /start-postgis.sh
 RUN chmod 0755 /start-postgis.sh
 
 USER postgres
-CMD /start-postgis.sh
+ENTRYPOINT ["/start-postgis.sh"]
