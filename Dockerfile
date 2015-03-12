@@ -1,6 +1,8 @@
 #--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
-FROM ubuntu:trusty
-MAINTAINER Tim Sutton<tim@kartoza.com>
+FROM ubuntu:14.04
+# borrrowed from:
+# MAINTAINER Tim Sutton<tim@kartoza.com>
+MAINTAINER x110dc
 
 RUN  export DEBIAN_FRONTEND=noninteractive
 ENV  DEBIAN_FRONTEND noninteractive
